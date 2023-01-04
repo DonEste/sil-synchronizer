@@ -1,7 +1,7 @@
 package com.sil.sil_synchronizer.Jobs.dgaSync;
 
 import com.sil.sil_synchronizer.Dtos.StationConfigurationDto;
-import com.sil.sil_synchronizer.Entities.DgaRegisrtyLog;
+import com.sil.sil_synchronizer.Entities.DgaRegisrtyLogEntity;
 import com.sil.sil_synchronizer.Entities.ViewArchivedInformationEntity;
 import com.sil.sil_synchronizer.Repositories.IDgaRegistryLogDao;
 import com.sil.sil_synchronizer.Repositories.IViewArchivedInformationDao;
@@ -37,7 +37,7 @@ public class PropertiesReader implements ItemReader<Map<String, Object>>, ItemSt
 
     private List<ViewArchivedInformationEntity> viewArchivedInformationToSave;
 
-    private List<DgaRegisrtyLog> dgaRegistryLogs;
+    private List<DgaRegisrtyLogEntity> dgaRegistryLogs;
 
     public PropertiesReader(Variables variables, IViewArchivedInformationDao viewArchivedInformationDao, IDgaRegistryLogDao dgaRegistryLogDao) {
         this.variables = variables;

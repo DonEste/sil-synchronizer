@@ -15,10 +15,14 @@ import javax.persistence.Table;
 @Data
 @NoArgsConstructor
 public class ViewInformationEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", insertable = false, nullable = false, updatable = false)
     private Long id;
+
+    @Column(name = "STA_SiteNumber", insertable = false, nullable = false, updatable = false)
+    private String stationNumber;
 
     @Column(name = "STA_Label", insertable = false, nullable = false, updatable = false)
     private String stationLabel;

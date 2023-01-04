@@ -15,10 +15,11 @@ import javax.persistence.Table;
 @Data
 @NoArgsConstructor
 public class ViewStationEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "STA_SiteNumber", insertable = false, nullable = false, updatable = false)
-    private Long siteNumber;
+    private Long stationNumber;
 
     @Column(name = "STA_Label", insertable = false, nullable = false, updatable = false)
     private String label;

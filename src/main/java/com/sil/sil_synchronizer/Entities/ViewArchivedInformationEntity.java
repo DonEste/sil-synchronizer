@@ -16,16 +16,17 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 public class ViewArchivedInformationEntity {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "ID", insertable = false, nullable = false, updatable = false)
     private Long id;
 
     @Column(name = "STA_SiteNumber", insertable = false, nullable = false, updatable = false)
-    private String label;
+    private long siteNumber;
 
     @Column(name = "INF_NumberInStation", insertable = false, nullable = false, updatable = false)
-    private String numberInStation;
+    private Long numberInStation;
 
     @Column(name = "INF_Date", insertable = false, nullable = false, updatable = false)
     private Date date;
