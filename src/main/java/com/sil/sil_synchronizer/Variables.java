@@ -11,10 +11,7 @@ import java.util.List;
 @Data
 public class Variables {
     //Endpoints variables
-    @Value("${dga.login.url}")
-    private String dgaLoginUrl;
-
-    @Value("${dga.login.username}")
+    @Value("${dga.login.user}")
     private String dgaUsername;
 
     @Value("${dga.login.password}")
