@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
-public class PropertiesReader implements ItemReader<Map<String, Object>>, ItemStream {
+public class DgaSyncReader implements ItemReader<Map<String, Object>>, ItemStream {
 
     private final Variables variables;
 
@@ -39,7 +39,7 @@ public class PropertiesReader implements ItemReader<Map<String, Object>>, ItemSt
 
     private List<DgaRegisrtyLogEntity> dgaRegistryLogs;
 
-    public PropertiesReader(Variables variables, IViewArchivedInformationDao viewArchivedInformationDao, IDgaRegistryLogDao dgaRegistryLogDao) {
+    public DgaSyncReader(Variables variables, IViewArchivedInformationDao viewArchivedInformationDao, IDgaRegistryLogDao dgaRegistryLogDao) {
         this.variables = variables;
         this.viewArchivedInformationDao = viewArchivedInformationDao;
         this.dgaRegistryLogDao = dgaRegistryLogDao;
@@ -47,7 +47,7 @@ public class PropertiesReader implements ItemReader<Map<String, Object>>, ItemSt
 
     @Override
     public void open(ExecutionContext executionContext) throws ItemStreamException {
-        //Get execution variables from properties file
+        //Get execution variables from properties file and fill stationConfigurationDtos
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             InputStream inputStream = new FileInputStream(variables.getPropertiesFilename());
@@ -57,27 +57,31 @@ public class PropertiesReader implements ItemReader<Map<String, Object>>, ItemSt
         } catch (Exception e) {
             log.error("Ha ocurrido el siguiente error: {}", e.getMessage());
             e.printStackTrace();
+            //TODO: enviar alerta
+            throw new ItemStreamException(e.getMessage());
         }
 
         //Get last sent status to the DGA
         dgaRegistryLogs = dgaRegistryLogDao.findLastByInformationNumber(stationConfigurationDtos.stream().map(StationConfigurationDto::getSiteCode).collect(Collectors.toList()));
 
-        //Get last informed data in DB
-        viewArchivedInformationToSave = viewArchivedInformationDao.findLastByInformationNumber(
-                stationConfigurationDtos.stream().map(StationConfigurationDto::returnInformationNumbers).flatMap(Collection::stream).collect(Collectors.toList())
-        );
-
-        if (!dgaRegistryLogs.isEmpty() && variables.getHoursRegressionTrigger() <= regresionRequired(dgaRegistryLogs.get(0).getDate(), new Date())) {
-            //If there is a missing period, get the data
-            Calendar startDate = Calendar.getInstance();
-            startDate.setTime(new Date());
-            startDate.add(Calendar.HOUR, variables.getHoursRegressionRetry());
-
-            viewArchivedInformationToSave.addAll(viewArchivedInformationDao.findByInformationNumberPreviousPeriods(
-                    stationConfigurationDtos.stream().map(StationConfigurationDto::returnInformationNumbers).flatMap(Collection::stream).collect(Collectors.toList()),
-                    dgaRegistryLogs.get(0).getDate().before(startDate.getTime()) ? dgaRegistryLogs.get(0).getDate() : startDate.getTime()
-            ));
+        //Check last sent data
+        long offlineHours = 1;
+        if (!dgaRegistryLogs.isEmpty() && getHoursDiff(dgaRegistryLogs.get(0).getDate(), new Date()) > variables.getHoursRegressionTrigger()) {
+            offlineHours = getHoursDiff(dgaRegistryLogs.get(0).getDate(), new Date());
+            log.warn("No se han enviado datos a la DGA durante {} horas", offlineHours);
+            //TODO: enviar alerta
         }
+
+        //Set how many hours back do we have to bring from DB
+        Calendar startDate = Calendar.getInstance();
+        startDate.setTime(new Date());
+        startDate.add(Calendar.HOUR, offlineHours > variables.getHoursRegressionRetry() ? -variables.getHoursRegressionRetry() : (int) -offlineHours);
+
+        //Bring data from DB
+        viewArchivedInformationToSave = viewArchivedInformationDao.findLastByInformationNumber(
+                stationConfigurationDtos.stream().map(StationConfigurationDto::returnInformationNumbers).flatMap(Collection::stream).collect(Collectors.toList()),
+                startDate.getTime()
+        );
     }
 
     @Override
@@ -89,13 +93,13 @@ public class PropertiesReader implements ItemReader<Map<String, Object>>, ItemSt
 
             ViewArchivedInformationEntity auxInformation = thisViewArchivedInformationToSave.remove(0);
 
-            if(thisViewArchivedInformationToSave.isEmpty()){
+            if (thisViewArchivedInformationToSave.isEmpty()) {
                 stationConfigurationDtos.remove(0);
             }
 
             Map<String, Object> response = new HashMap<>();
             response.put("station_data", currentStation);
-            response.put("informationData", auxInformation)
+            response.put("informationData", auxInformation);
         }
 
         return null;
@@ -111,7 +115,7 @@ public class PropertiesReader implements ItemReader<Map<String, Object>>, ItemSt
         //NADA
     }
 
-    public long regresionRequired(Date startDate, Date endDate) {
+    public long getHoursDiff(Date startDate, Date endDate) {
         long secs = (endDate.getTime() - startDate.getTime()) / 1000;
         long hours = secs / 3600;
 

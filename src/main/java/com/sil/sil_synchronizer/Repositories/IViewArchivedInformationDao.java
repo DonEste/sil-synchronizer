@@ -10,17 +10,11 @@ import java.util.List;
 
 public interface IViewArchivedInformationDao extends JpaRepository<ViewArchivedInformationEntity, Long> {
 
-    @Query(value = "SELECT vai, MAX(vai.date) " +
-            " FROM ViewArchivedInformationEntity vai " +
-            " WHERE vai.numberInStation IN (:informationNumbers)" +
-            " GROUP BY vai.numberInStation")
-    List<ViewArchivedInformationEntity> findLastByInformationNumber(@Param("informationNumbers") List<Long> informationNumbers);
-
-    @Query(value = "SELECT vai " +
-            " FROM View_ArchivedInformations vai " +
-            " WHERE vai.numberInStation IN (:informationNumbers) " +
-            " AND vai.INF_Date > :startDate " +
-            " GROUP BY DATE_ADD( DATE(vai.INF_Date), INTERVAL( HOUR(vai.INF_Date) - HOUR(vai.INF_Date) %% %d ) HOUR) as hourly", nativeQuery = true)
-    List<ViewArchivedInformationEntity> findByInformationNumberPreviousPeriods(@Param("informationNumbers") List<Long> informationNumbers,
-                                                                               @Param("startDate") Date startDate);
+    @Query(value = "SELECT ID, STA_SiteNumber, INF_NumberInStation, MAX(FORMAT(INF_Date, 'yyyy-MM-dd HH:00:00')) INF_Date, SUM(INF_Value) INF_Value " +
+            "FROM View_ArchivedInformations " +
+            "WHERE INF_NumberInStation in (:informationNumbers)  " +
+            "AND INF_Date > :startDate " +
+            "GROUP BY FORMAT(INF_Date, 'yyyy-MM-dd HH'), STA_SiteNumber, INF_NumberInStation, ID", nativeQuery = true)
+    List<ViewArchivedInformationEntity> findLastByInformationNumber(@Param("informationNumbers") List<Long> informationNumbers,
+                                                                    @Param("startDate") Date startDate);
 }

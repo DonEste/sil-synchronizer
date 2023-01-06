@@ -8,11 +8,11 @@ import org.springframework.batch.item.ItemWriter;
 import java.util.List;
 
 @Slf4j
-public class PropertiesWriter implements ItemWriter<DgaRequiredInformationDto> {
+public class DgaSyncWriter implements ItemWriter<DgaRequiredInformationDto> {
 
     private final Variables variables;
 
-    public PropertiesWriter(Variables variables) {
+    public DgaSyncWriter(Variables variables) {
         this.variables = variables;
     }
 

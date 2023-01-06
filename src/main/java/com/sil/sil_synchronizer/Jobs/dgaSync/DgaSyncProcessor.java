@@ -7,9 +7,9 @@ import org.springframework.batch.item.ItemProcessor;
 import java.util.Map;
 
 @Slf4j
-public class PropertiesProcessor implements ItemProcessor<Map<String, Object>, DgaRequiredInformationDto> {
+public class DgaSyncProcessor implements ItemProcessor<Map<String, Object>, DgaRequiredInformationDto> {
 
-    public PropertiesProcessor(){
+    public DgaSyncProcessor(){
 
     }
 

@@ -19,7 +19,6 @@ import java.util.Properties;
 
 @Configuration
 @EnableTransactionManagement
-@Slf4j
 public class JpaConfiguration {
 
     private Environment env = null;
@@ -50,8 +49,6 @@ public class JpaConfiguration {
         dataSource.setUser(env.getProperty("db.username"));
         dataSource.setDriverClass(env.getProperty("db.driver"));
 
-        log.info("Connection string: {}", dataSource.getJdbcUrl());
-
         return dataSource;
     }
 
@@ -66,7 +63,6 @@ public class JpaConfiguration {
         entityManagerFactory.setDataSource(dataSource);
 
         // Classpath scanning of @Component, @Service, etc annotated class
-        entityManagerFactory.setPackagesToScan("com.sil.sil_synchronizer");
         entityManagerFactory.setPackagesToScan("com.sil.sil_synchronizer");
 
         // Vendor adapter
@@ -85,20 +81,6 @@ public class JpaConfiguration {
 
         // Return the entity manager.
         return entityManagerFactory;
-    }
-
-    @Bean
-    public JpaTransactionManager transactionManager(EntityManagerFactory entityManagerFactory) {
-
-        /*
-         *  Create a new transaction mamager and set
-         *  the properties.
-         * */
-        JpaTransactionManager transactionManager = new JpaTransactionManager();
-        transactionManager.setEntityManagerFactory(entityManagerFactory);
-
-        // Return a new transaction manager.
-        return transactionManager;
     }
 
     @Bean
