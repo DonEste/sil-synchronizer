@@ -1,12 +1,14 @@
 package com.sil.sil_synchronizer.Services;
 
 import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
+import com.sil.sil_synchronizer.Variables;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionRequest;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionResponse;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionSubterranea;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionTrazaType;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataUsuario;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
@@ -19,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.concurrent.TimeUnit;
 
 @Slf4j
 public class DgaClientService extends WebServiceGatewaySupport {
@@ -35,11 +38,16 @@ public class DgaClientService extends WebServiceGatewaySupport {
     @Value("${dga.wsld.url}")
     private String dgaWsdlUrl;
 
+    @Autowired
+    Variables variables;
+
     DateFormat dateFormatTime = new SimpleDateFormat("HH:mm:ss");
 
     DateFormat dateFormatDate = new SimpleDateFormat("dd-MM-yyyy");
 
     public AuthSendDataExtraccionResponse sendDataExtrationToDga(DgaRequiredInformationDto dgaRequiredInformationDto) throws Exception {
+
+        log.info("Sending object to DGA: {}", dgaRequiredInformationDto);
 
         //Prepare request
         AuthSendDataExtraccionRequest request = new AuthSendDataExtraccionRequest();
@@ -82,6 +90,9 @@ public class DgaClientService extends WebServiceGatewaySupport {
             log.error("Ha ocurrido el siguiente error al enviar la información: {}", response.getStatus().getDescription());
             throw new Exception(response.getStatus().getDescription());
         }
+
+        //Set the min wait between every DGA endpoint call
+        TimeUnit.SECONDS.sleep(variables.getDgaWebServiceSecondsDelay());
 
         return response;
     }
