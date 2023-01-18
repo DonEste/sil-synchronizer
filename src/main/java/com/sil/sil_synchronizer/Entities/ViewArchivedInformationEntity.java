@@ -23,14 +23,20 @@ public class ViewArchivedInformationEntity {
     private Long id;
 
     @Column(name = "STA_SiteNumber", insertable = false, nullable = false, updatable = false)
-    private long siteNumber;
+    private long stationId;
 
     @Column(name = "INF_NumberInStation", insertable = false, nullable = false, updatable = false)
-    private Long numberInStation;
+    private Long informationNumber;
 
     @Column(name = "INF_Date", insertable = false, nullable = false, updatable = false)
     private Date date;
 
-    @Column(name = "INF_Value", insertable = false, nullable = false, updatable = false)
-    private Long value;
+    @Column(name = "INF_Flow", insertable = false, nullable = false, updatable = false)
+    private Long flow;
+
+    @Column(name = "INF_Totalizer", insertable = false, nullable = false, updatable = false)
+    private Long totalizer;
+
+    @Column(name = "INF_PhreaticLevel", insertable = false, nullable = false, updatable = false)
+    private Long phreaticLevel;
 }

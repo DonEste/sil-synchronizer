@@ -1,5 +1,6 @@
 package com.sil.sil_synchronizer.Dtos;
 
+import com.google.gson.annotations.SerializedName;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -14,21 +15,37 @@ import java.util.List;
 public class StationConfigurationDto {
 
     @JsonProperty("numero_estacion")
-    private int stationNumber;
+    @SerializedName("numero_estacion")
+    private Long stationNumber;
 
     @JsonProperty("codigo_obra")
+    @SerializedName("codigo_obra")
     private String siteCode;
 
     @JsonProperty("numero_informacion_nivel_freatico")
-    private long phreaticLevelInfNumber;
+    @SerializedName("numero_informacion_nivel_freatico")
+    private Long phreaticLevelInfNumber;
 
     @JsonProperty("numero_informacion_totalizador")
-    private long totalizerInfNumber;
+    @SerializedName("numero_informacion_totalizador")
+    private Long totalizerInfNumber;
 
     @JsonProperty("numero_informacion_caudal")
-    private long flowInfNumber;
+    @SerializedName("numero_informacion_caudal")
+    private Long flowInfNumber;
 
     public List<Long> returnInformationNumbers(){
         return Arrays.asList(phreaticLevelInfNumber, totalizerInfNumber, flowInfNumber);
+    }
+
+    @Override
+    public String toString() {
+        return "StationConfigurationDto{" +
+                "stationNumber=" + stationNumber +
+                ", siteCode='" + siteCode + '\'' +
+                ", phreaticLevelInfNumber=" + phreaticLevelInfNumber +
+                ", totalizerInfNumber=" + totalizerInfNumber +
+                ", flowInfNumber=" + flowInfNumber +
+                '}';
     }
 }

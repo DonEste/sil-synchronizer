@@ -18,7 +18,7 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 //Entity used to save dga sent data logs in db (table wil be created automatically if does not exist)
-public class DgaRegisrtyLogEntity {
+public class DgaRegistryLogEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,19 +26,19 @@ public class DgaRegisrtyLogEntity {
     private Long id;
 
     @Column(name = "SITE_code", insertable = false, nullable = false, updatable = false)
-    private Long siteCode;
+    private String siteCode;
 
     @Column(name = "STA_Id", insertable = false, nullable = false, updatable = false)
     private Long stationId;
 
     @Column(name = "INF_Flow", nullable = false, updatable = false)
-    private String flow;
+    private Double flow;
 
     @Column(name = "INF_Phreatic_level", nullable = false, updatable = false)
-    private String phreaticLevel;
+    private Double phreaticLevel;
 
     @Column(name = "INF_Totalizer", nullable = false, updatable = false)
-    private String totalizer;
+    private Double totalizer;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "INF_Date", nullable = false, updatable = false) //Informed date
@@ -46,5 +46,23 @@ public class DgaRegisrtyLogEntity {
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "REG_Date", nullable = false, updatable = false) //Actual date where it was informed
-    private Date geistryDate;
+    private Date registryDate;
+
+    @Column(name = "REG_Id", nullable = false, updatable = false) //Actual date where it was informed
+    private String registryId;
+
+    @Override
+    public String toString() {
+        return "DgaRegistryLogEntity{" +
+                "id=" + id +
+                ", siteCode='" + siteCode + '\'' +
+                ", stationId=" + stationId +
+                ", flow=" + flow +
+                ", phreaticLevel=" + phreaticLevel +
+                ", totalizer=" + totalizer +
+                ", date=" + date +
+                ", registryDate=" + registryDate +
+                ", registryId='" + registryId + '\'' +
+                '}';
+    }
 }

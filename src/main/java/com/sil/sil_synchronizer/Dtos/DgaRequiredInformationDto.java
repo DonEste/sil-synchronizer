@@ -9,7 +9,7 @@ import java.util.Date;
 @Data
 public class DgaRequiredInformationDto {
 
-    private int stationNumber;
+    private long stationNumber;
 
     private String siteCode;
 
@@ -20,4 +20,15 @@ public class DgaRequiredInformationDto {
     private double totalizer;
 
     private Date date;
+
+    @Override
+    public String toString() {
+        return "DgaRequiredInformationDto{" + "stationNumber=" + stationNumber +
+                ", siteCode='" + siteCode + '\'' +
+                ", flow=" + flow +
+                ", phreaticLevel=" + phreaticLevel +
+                ", totalizer=" + totalizer +
+                ", date=" + date +
+                '}';
+    }
 }
