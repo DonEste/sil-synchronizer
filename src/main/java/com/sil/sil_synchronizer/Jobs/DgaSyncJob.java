@@ -44,17 +44,17 @@ public class DgaSyncJob {
     private int jobChunkSize;
 
     @Bean
-    public Job dgaSync(Step dgaSyncStepp) {
-        return jobBuilderFactory.get("dgaSync")
+    public Job dgaSync() {
+        return jobBuilderFactory.get("dgaSyncJob")
                 .incrementer(new RunIdIncrementer())
                 .listener(getDgaSyncListener())
-                .start(dgaSyncStepp)
+                .start(dgaSyncStep())
                 .build();
     }
 
     @Bean
-    public Step dgaSyncStepp() {
-        return stepBuilderFactory.get("dgaSyncStepp")
+    public Step dgaSyncStep() {
+        return stepBuilderFactory.get("dgaSyncStep")
                 .<Map<String, Object>, DgaRequiredInformationDto>chunk(jobChunkSize)
                 .reader(getPropertiesReader())
                 .processor(getPropertiesProcessor())
@@ -72,7 +72,7 @@ public class DgaSyncJob {
     }
 
     public DgaSyncWriter getPropertiesWriter() {
-        return new DgaSyncWriter(variables);
+        return new DgaSyncWriter(variables, dgaRegistryLogDao);
     }
 
     public DgaSyncListener getDgaSyncListener() {
