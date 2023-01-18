@@ -1,0 +1,9 @@
+[
+  {
+    "numero_estacion": 1,
+    "codigo_obra": "EXAMPLE",
+    "numero_informacion_nivel_freatico": 1,
+    "numero_informacion_totalizador": 2,
+    "numero_informacion_caudal": 3
+  }
+]
