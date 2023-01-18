@@ -4,9 +4,6 @@ import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.List;
-
 @Component
 @Data
 public class Variables {
@@ -31,6 +28,15 @@ public class Variables {
 
     @Value("${hours.regression.trigger}")
     private int hoursRegressionTrigger;
+
+    @Value("${hours.search.offset}")
+    private int hoursSearchOffset;
+
+    @Value("${dga.webservice.max.attempts}")
+    private int dgaWebServicesMaxAttempts;
+
+    @Value("${dga.webservice.seconds.delay}")
+    private int dgaWebServiceSecondsDelay;
 
     private int savedRegistries = 0;
 
