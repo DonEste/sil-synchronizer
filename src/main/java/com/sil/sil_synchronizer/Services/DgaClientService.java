@@ -1,20 +1,28 @@
 package com.sil.sil_synchronizer.Services;
 
 import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
-import com.sil.sil_synchronizer.Variables;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionRequest;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionResponse;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionSubterranea;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionTrazaType;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataUsuario;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
+import org.springframework.ws.soap.SoapBody;
+import org.springframework.ws.soap.SoapHeader;
+import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
+import org.springframework.xml.transform.StringSource;
 
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
+import javax.xml.namespace.QName;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -24,9 +32,10 @@ import java.util.GregorianCalendar;
 import java.util.concurrent.TimeUnit;
 
 @Slf4j
+@RequiredArgsConstructor(onConstructor = @__(@Autowired))
 public class DgaClientService extends WebServiceGatewaySupport {
 
-    @Value("${dga.login.username}")
+    @Value("${dga.login.user}")
     private String dgaUser;
 
     @Value("${dga.login.password}")
@@ -38,12 +47,14 @@ public class DgaClientService extends WebServiceGatewaySupport {
     @Value("${dga.wsld.url}")
     private String dgaWsdlUrl;
 
-    @Autowired
-    Variables variables;
+    @Value("${dga.webservice.seconds.delay}")
+    private long dgaWebServiceDelay;
 
     DateFormat dateFormatTime = new SimpleDateFormat("HH:mm:ss");
 
     DateFormat dateFormatDate = new SimpleDateFormat("dd-MM-yyyy");
+
+    DateFormat dateFormatTimestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     public AuthSendDataExtraccionResponse sendDataExtrationToDga(DgaRequiredInformationDto dgaRequiredInformationDto) throws Exception {
 
@@ -82,7 +93,26 @@ public class DgaClientService extends WebServiceGatewaySupport {
         //Fill request extraction data
         request.setAuthDataExtraccionSubterranea(extraccionSubterranea);
 
-        AuthSendDataExtraccionResponse response = (AuthSendDataExtraccionResponse) getWebServiceTemplate().marshalSendAndReceive(dgaWsdlUrl, request, new SoapActionCallback(dgaServiceUrl));
+        AuthSendDataExtraccionResponse response = (AuthSendDataExtraccionResponse) getWebServiceTemplate().marshalSendAndReceive(dgaServiceUrl, request, new SoapActionCallback(dgaServiceUrl) {
+            public void doWithMessage(WebServiceMessage message) {
+                try {
+                    SoapMessage soapMessage = (SoapMessage) message;
+                    SoapHeader header = soapMessage.getSoapHeader();
+                    String action = soapMessage.getSoapAction();
+                    SoapBody body = soapMessage.getSoapBody();
+                    QName qname = body.getName();
+                    StringSource headerSource = new StringSource("<aut:authSendDataExtraccionTraza xmlns:aut=\"http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionRequest\">" +
+                            "<aut:codigoDeLaObra>" + dgaRequiredInformationDto.getSiteCode() + "</aut:codigoDeLaObra>" +
+                            "<aut:timeStampOrigen>" + dateFormatTimestamp.format(new Date()) + "</aut:timeStampOrigen>" +
+                            "</aut:authSendDataExtraccionTraza>");
+                    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+                    transformer.transform(headerSource, header.getResult());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    //TODO: enviar notificación
+                }
+            }
+        });
 
         if (response.getStatus().getCode().equals("0")) {
             log.info("Información enviada exitosamente");
@@ -92,7 +122,7 @@ public class DgaClientService extends WebServiceGatewaySupport {
         }
 
         //Set the min wait between every DGA endpoint call
-        TimeUnit.SECONDS.sleep(variables.getDgaWebServiceSecondsDelay());
+        TimeUnit.SECONDS.sleep(dgaWebServiceDelay);
 
         return response;
     }

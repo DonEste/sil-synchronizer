@@ -1,20 +1,18 @@
 package com.sil.sil_synchronizer.config;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
+import java.util.Objects;
 import java.util.Properties;
 
 @Configuration
@@ -38,11 +36,11 @@ public class JpaConfiguration {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
 
         // Set properties
-        dataSource.setInitialPoolSize(Integer.parseInt(env.getProperty("hibernate.c3p0.min_size")));
-        dataSource.setMinPoolSize(Integer.parseInt(env.getProperty("hibernate.c3p0.min_size")));
-        dataSource.setMaxPoolSize(Integer.parseInt(env.getProperty("hibernate.c3p0.max_size")));
-        dataSource.setMaxIdleTime(Integer.parseInt(env.getProperty("hibernate.c3p0.idle_max_idle_time")));
-        dataSource.setIdleConnectionTestPeriod(Integer.parseInt(env.getProperty("hibernate.c3p0.idle_test_period")));
+        dataSource.setInitialPoolSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("hibernate.c3p0.min_size"))));
+        dataSource.setMinPoolSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("hibernate.c3p0.min_size"))));
+        dataSource.setMaxPoolSize(Integer.parseInt(Objects.requireNonNull(env.getProperty("hibernate.c3p0.max_size"))));
+        dataSource.setMaxIdleTime(Integer.parseInt(Objects.requireNonNull(env.getProperty("hibernate.c3p0.idle_max_idle_time"))));
+        dataSource.setIdleConnectionTestPeriod(Integer.parseInt(Objects.requireNonNull(env.getProperty("hibernate.c3p0.idle_test_period"))));
 
         dataSource.setJdbcUrl(env.getProperty("db.url"));
         dataSource.setPassword(env.getProperty("db.password"));

@@ -9,10 +9,16 @@ import java.util.List;
 
 public interface IDgaRegistryLogDao extends JpaRepository<DgaRegistryLogEntity, Long> {
 
-    @Query(value = "SELECT drl, MAX(drl.id) " +
+    @Query(value = "SELECT * FROM ( " +
+            "    SELECT ROW_NUMBER() OVER (PARTITION BY SITE_code ORDER BY INF_Date DESC) as RowNum, * " +
+            "    FROM Dga_Registry_Log where SITE_code IN (:siteCodes)) vai " +
+            "WHERE RowNum = 1", nativeQuery = true)
+    List<DgaRegistryLogEntity> findLastByInformationNumber(@Param("siteCodes") List<String> siteCodes);
+
+    @Query(value = "SELECT drl " +
             " FROM DgaRegistryLogEntity drl " +
             " WHERE drl.siteCode IN (:siteCodes)" +
             " GROUP BY drl.siteCode")
-    List<DgaRegistryLogEntity> findLastByInformationNumber(@Param("siteCodes") List<String> siteCodes);
+    List<DgaRegistryLogEntity> findLastByInformationNumber_old(@Param("siteCodes") List<String> siteCodes);
 
 }

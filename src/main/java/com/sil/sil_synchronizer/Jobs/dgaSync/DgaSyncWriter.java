@@ -8,7 +8,6 @@ import com.sil.sil_synchronizer.Variables;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemWriter;
-import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.Date;
 import java.util.List;
@@ -20,12 +19,12 @@ public class DgaSyncWriter implements ItemWriter<DgaRequiredInformationDto> {
 
     private final IDgaRegistryLogDao dgaRegistryLogDao;
 
-    @Autowired
-    DgaClientService dgaClientService;
+    private final DgaClientService dgaClientService;
 
-    public DgaSyncWriter(Variables variables, IDgaRegistryLogDao dgaRegistryLogDao) {
+    public DgaSyncWriter(Variables variables, IDgaRegistryLogDao dgaRegistryLogDao, DgaClientService dgaClientService) {
         this.variables = variables;
         this.dgaRegistryLogDao = dgaRegistryLogDao;
+        this.dgaClientService = dgaClientService;
     }
 
     @Override

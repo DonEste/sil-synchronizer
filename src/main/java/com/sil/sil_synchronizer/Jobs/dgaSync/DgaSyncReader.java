@@ -1,10 +1,12 @@
 package com.sil.sil_synchronizer.Jobs.dgaSync;
 
+import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
 import com.sil.sil_synchronizer.Dtos.StationConfigurationDto;
 import com.sil.sil_synchronizer.Entities.DgaRegistryLogEntity;
 import com.sil.sil_synchronizer.Entities.ViewArchivedInformationEntity;
 import com.sil.sil_synchronizer.Repositories.IDgaRegistryLogDao;
 import com.sil.sil_synchronizer.Repositories.IViewArchivedInformationDao;
+import com.sil.sil_synchronizer.Services.DgaClientService;
 import com.sil.sil_synchronizer.Variables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
@@ -43,12 +45,15 @@ public class DgaSyncReader implements ItemReader<Map<String, Object>>, ItemStrea
 
     private int stationCount;
 
-    public DgaSyncReader(Variables variables, IViewArchivedInformationDao viewArchivedInformationDao, IDgaRegistryLogDao dgaRegistryLogDao) {
+    private DgaClientService dgaClientService;
+
+    public DgaSyncReader(Variables variables, IViewArchivedInformationDao viewArchivedInformationDao, IDgaRegistryLogDao dgaRegistryLogDao, DgaClientService dgaClientService) {
         this.variables = variables;
         this.viewArchivedInformationDao = viewArchivedInformationDao;
         this.dgaRegistryLogDao = dgaRegistryLogDao;
         this.resultCount = 0;
         this.stationCount = 0;
+        this.dgaClientService = dgaClientService;
     }
 
     @Override
@@ -56,10 +61,14 @@ public class DgaSyncReader implements ItemReader<Map<String, Object>>, ItemStrea
         //Get execution variables from properties file and fill stationConfigurationDtos
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            InputStream inputStream = new FileInputStream(variables.getPropertiesFilename());
+            //If the execution is in production, then use the dga_sync_properties.json, otherwise, use the example in the resources folder
+            InputStream inputStream = variables.getEnvironment().equals("PRODUCTION") ?
+                    new FileInputStream(variables.getPropertiesFilename()) :
+                    getClass().getClassLoader().getResourceAsStream("dga_sync_properties.json");
             TypeReference<List<StationConfigurationDto>> typeReference = new TypeReference<>() {
             };
             stationConfigurationDtos = objectMapper.readValue(inputStream, typeReference);
+
         } catch (Exception e) {
             log.error("Ha ocurrido el siguiente error: {}", e.getMessage());
             e.printStackTrace();
@@ -80,7 +89,20 @@ public class DgaSyncReader implements ItemReader<Map<String, Object>>, ItemStrea
     }
 
     @Override
-    public Map<String, Object> read() {
+    public Map<String, Object> read() throws Exception {
+        if(true){
+            DgaRequiredInformationDto test = new DgaRequiredInformationDto();
+            test.setStationNumber(1);
+            test.setSiteCode("OC-1002-22");
+            test.setFlow(0L);
+            test.setTotalizer(0L);
+            test.setPhreaticLevel(0L);
+            test.setDate(new Date());
+
+            dgaClientService.sendDataExtrationToDga(test);
+            return null;
+        }
+
         //If there is not a valid configuration file loaded, then finish the job
         if (stationConfigurationDtos == null || stationConfigurationDtos.isEmpty()) {
             return null;

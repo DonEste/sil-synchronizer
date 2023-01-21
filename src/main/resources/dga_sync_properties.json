@@ -1,7 +1,21 @@
 [
   {
     "numero_estacion": 1,
-    "codigo_obra": "EXAMPLE",
+    "codigo_obra": "EXAMPLE1",
+    "numero_informacion_nivel_freatico": 1,
+    "numero_informacion_totalizador": 2,
+    "numero_informacion_caudal": 3
+  },
+  {
+    "numero_estacion": 2,
+    "codigo_obra": "EXAMPLE2",
+    "numero_informacion_nivel_freatico": 1,
+    "numero_informacion_totalizador": 2,
+    "numero_informacion_caudal": 3
+  },
+  {
+    "numero_estacion": 3,
+    "codigo_obra": "EXAMPLE3",
     "numero_informacion_nivel_freatico": 1,
     "numero_informacion_totalizador": 2,
     "numero_informacion_caudal": 3

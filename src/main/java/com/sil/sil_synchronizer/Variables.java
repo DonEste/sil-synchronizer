@@ -2,21 +2,13 @@ package com.sil.sil_synchronizer;
 
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Component;
 
 @Component
 @Data
 public class Variables {
     //Endpoints variables
-    @Value("${dga.login.user}")
-    private String dgaUsername;
-
-    @Value("${dga.login.password}")
-    private String dgaPassword;
-
-    @Value("${dga.service.url}")
-    private String dgaUrl;
-
     @Value("${app.environment}")
     public String environment;
 

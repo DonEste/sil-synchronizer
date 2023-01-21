@@ -6,6 +6,7 @@ import com.sil.sil_synchronizer.Jobs.dgaSync.DgaSyncReader;
 import com.sil.sil_synchronizer.Jobs.dgaSync.DgaSyncWriter;
 import com.sil.sil_synchronizer.Repositories.IDgaRegistryLogDao;
 import com.sil.sil_synchronizer.Repositories.IViewArchivedInformationDao;
+import com.sil.sil_synchronizer.Services.DgaClientService;
 import com.sil.sil_synchronizer.Variables;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
@@ -36,6 +37,9 @@ public class DgaSyncJob {
     @Autowired
     private Variables variables;
 
+    @Autowired
+    private DgaClientService dgaClientService;
+
     private final IDgaRegistryLogDao dgaRegistryLogDao;
 
     private final IViewArchivedInformationDao viewArchivedInformationDao;
@@ -64,7 +68,7 @@ public class DgaSyncJob {
 
 
     public ItemReader<Map<String, Object>> getPropertiesReader() {
-        return new DgaSyncReader(variables, viewArchivedInformationDao, dgaRegistryLogDao);
+        return new DgaSyncReader(variables, viewArchivedInformationDao, dgaRegistryLogDao, dgaClientService);
     }
 
     public DgaSyncProcessor getPropertiesProcessor() {
@@ -72,7 +76,7 @@ public class DgaSyncJob {
     }
 
     public DgaSyncWriter getPropertiesWriter() {
-        return new DgaSyncWriter(variables, dgaRegistryLogDao);
+        return new DgaSyncWriter(variables, dgaRegistryLogDao, dgaClientService);
     }
 
     public DgaSyncListener getDgaSyncListener() {

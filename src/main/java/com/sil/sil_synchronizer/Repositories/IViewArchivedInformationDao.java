@@ -22,8 +22,7 @@ public interface IViewArchivedInformationDao extends JpaRepository<ViewArchivedI
             "WHERE INF_NumberInStation in (:informationNumbers)  " +
             "  AND INF_Date > :startDate  " +
             "  AND INF_Date < DATEADD(hour, -:offsetHours, SYSDATETIMEOFFSET())  " +
-            "GROUP BY FORMAT(INF_Date, 'yyyy-MM-dd HH'), STA_SiteNumber, INF_NumberInStation, ID  " +
-            "HAVING count(*) > :minDataSamples", nativeQuery = true)
+            "GROUP BY FORMAT(INF_Date, 'yyyy-MM-dd HH'), STA_SiteNumber, INF_NumberInStation, ID  ", nativeQuery = true)
     List<ViewArchivedInformationEntity> findHourlyAverage(@Param("informationNumbers") List<Long> informationNumbers,
                                                           @Param("startDate") Date startDate,
                                                           @Param("flowNumber") Long flowNumber,
