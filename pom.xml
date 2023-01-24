@@ -134,13 +134,10 @@
                 <configuration>
                     <schemaLanguage>WSDL</schemaLanguage>
                     <generatePackage>com.sil.sil_synchronizer.webservices.wsdl</generatePackage>
-                    <schemas>
-                        <schema>
-                            <url>
-                                https://snia.mop.gob.cl/controlextraccion/wsdl/datosExtraccion/SendDataExtraccionService?wsdl
-                            </url>
-                        </schema>
-                    </schemas>
+                    <schemaDirectory>${project.basedir}/src/main/resources/wsdl</schemaDirectory>
+                    <schemaIncludes>
+                        <include>*.wsdl</include>
+                    </schemaIncludes>
                 </configuration>
             </plugin>
             <!-- end::wsdl[] -->

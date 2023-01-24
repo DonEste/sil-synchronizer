@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionRequest" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionRequest" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="authSendDataUsuario">
+    <xsd:annotation>
+      <xsd:documentation>Seccion para envio datos usuarios autorizados</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="idUsuario">
+        <xsd:annotation>
+          <xsd:documentation>usuario autorizado para enviar informacion de extracciones.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:complexType>
+          <xsd:sequence>
+            <xsd:element name="rut">
+              <xsd:simpleType>
+                <xsd:restriction base="xsd:string"/>
+              </xsd:simpleType>
+            </xsd:element>
+          </xsd:sequence>
+        </xsd:complexType>
+      </xsd:element>
+      <xsd:element name="password" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>password de usuario autorizado para enviar informacion de extracciones.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

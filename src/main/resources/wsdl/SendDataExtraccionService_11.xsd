@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionResponse" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionResponse" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="SendDataExtraccionService_12.xsd"/>
+  <xsd:element name="authSendDataExtraccionResponse">
+    <xsd:annotation>
+      <xsd:documentation>Estructura respuesta servicio web</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="numeroComprobante">
+          <xsd:annotation>
+            <xsd:documentation>Numero de Comprobante asignado a la insercion de la medicion</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string"/>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="status" type="StatusTypeAuth"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/GetDataExtraccionResponse" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/GetDataExtraccionResponse" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="Medicion">
+    <xsd:annotation>
+      <xsd:documentation>Datos que se recuperan de la medicion</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element maxOccurs="1" minOccurs="0" name="idMedicion" type="xsd:long">
+        <xsd:annotation>
+          <xsd:documentation>Identificador de la medicion</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="fechaIngreso" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Fecha de ingreso de la medicion (dd-mm-yyyy).</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="fechaMedicion" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Fecha de la medicion (dd-mm-yyyy).</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="caudal">
+        <xsd:annotation>
+          <xsd:documentation>Caudal medido con el flujometro en l/s. Con 2 decimales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="alturaLimnimetrica">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="totalizador">
+        <xsd:annotation>
+          <xsd:documentation>Valor del totalizador del flujometro en metros cubicos. Sin decimales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="nivelFreaticoDelPozo">
+        <xsd:annotation>
+          <xsd:documentation>Nivel freatico medido por el pozometro en metros. Con 2 decimales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

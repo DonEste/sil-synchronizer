@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionRequest" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionRequest" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="authSendDataExtraccionTrazaType">
+    <xsd:annotation>
+      <xsd:documentation>datos para ser enviados en Header</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="codigoDeLaObra">
+        <xsd:annotation>
+          <xsd:documentation>Código dado por el software cuando ingrese su Obra de
+captación</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:string"/>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="timeStampOrigen" type="xsd:dateTime"/>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

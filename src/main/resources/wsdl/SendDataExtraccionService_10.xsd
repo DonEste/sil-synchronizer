@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/GetDataExtraccionRequest" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/GetDataExtraccionRequest" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:element name="getDataExtraccionRequest">
+    <xsd:annotation>
+      <xsd:documentation>Rcupera datos de extracción de aguas</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="codigoDeLaObra">
+          <xsd:annotation>
+            <xsd:documentation>Codigo dado por el software cuando ingrese su Obra de captacion</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string"/>
+          </xsd:simpleType>
+        </xsd:element>
+        <xsd:element name="numeroComprobante">
+          <xsd:annotation>
+            <xsd:documentation>Numero de Comprobante asignado a la insercion de la medicion</xsd:documentation>
+          </xsd:annotation>
+          <xsd:simpleType>
+            <xsd:restriction base="xsd:string"/>
+          </xsd:simpleType>
+        </xsd:element>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

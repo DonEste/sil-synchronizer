@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/SendDataExtraccionRequest" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/SendDataExtraccionRequest" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="SendDataExtraccionService_6.xsd"/>
+  <xsd:element name="sendDataExtraccionTraza" type="sendDataExtraccionTrazaType">
+    <xsd:annotation>
+      <xsd:documentation>Estructura de Datos a enviar en Header</xsd:documentation>
+    </xsd:annotation>
+  </xsd:element>
+</xsd:schema>

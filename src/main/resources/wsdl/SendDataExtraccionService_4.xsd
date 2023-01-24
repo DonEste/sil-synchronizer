@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/SendDataExtraccionRequest" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/SendDataExtraccionRequest" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="sendDataExtraccionSuperficial">
+    <xsd:annotation>
+      <xsd:documentation>Sección para envio datos extraccion de aguas
+Superficial</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="fechaMedicion" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Fecha de la medición (dd-mm-
+yyyy).</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="horaMedicion" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Hora de la medición (hh:mm:ss).
+Formato de 24 horas.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="caudal">
+        <xsd:annotation>
+          <xsd:documentation>Caudal medido con el flujómetro en
+l/s. Con 2 decimales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="alturaLimnimetrica">
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>

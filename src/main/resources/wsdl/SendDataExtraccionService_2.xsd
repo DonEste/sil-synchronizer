@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/SendDataExtraccionRequest" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/SendDataExtraccionRequest" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="SendDataExtraccionService_3.xsd"/>
+  <xsd:include schemaLocation="SendDataExtraccionService_4.xsd"/>
+  <xsd:element name="sendDataExtraccionRequest">
+    <xsd:annotation>
+      <xsd:documentation>Envio datos de extracción de aguas</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:choice>
+        <xsd:element minOccurs="0" name="dataExtraccionSuperficial" type="sendDataExtraccionSuperficial"/>
+        <xsd:element minOccurs="0" name="dataExtraccionSubterranea" type="sendDataExtraccionSubterranea"/>
+      </xsd:choice>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

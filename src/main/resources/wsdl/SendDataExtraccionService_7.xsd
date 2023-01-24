@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/GetDataExtraccionResponse" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/GetDataExtraccionResponse" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="SendDataExtraccionService_8.xsd"/>
+  <xsd:include schemaLocation="SendDataExtraccionService_9.xsd"/>
+  <xsd:element name="getDataExtraccionResponse">
+    <xsd:annotation>
+      <xsd:documentation>Estructura respuesta servicio web</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="medicion" type="Medicion"/>
+        <xsd:element name="status" type="StatusTypeMedicion"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

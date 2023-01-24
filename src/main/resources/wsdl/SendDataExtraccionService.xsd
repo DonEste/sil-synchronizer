@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/SendDataExtraccionResponse" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/SendDataExtraccionResponse" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:include schemaLocation="SendDataExtraccionService_1.xsd"/>
+  <xsd:element name="sendDataExtraccionResponse">
+    <xsd:annotation>
+      <xsd:documentation>Estructura respuesta servicio web</xsd:documentation>
+    </xsd:annotation>
+    <xsd:complexType>
+      <xsd:sequence>
+        <xsd:element name="status" type="StatusType"/>
+      </xsd:sequence>
+    </xsd:complexType>
+  </xsd:element>
+</xsd:schema>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema attributeFormDefault="unqualified" elementFormDefault="qualified" targetNamespace="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionRequest" xmlns="http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionRequest" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <xsd:complexType name="authSendDataExtraccionSubterranea">
+    <xsd:annotation>
+      <xsd:documentation>Sección para envio datos extraccion de aguas
+Subterraneas</xsd:documentation>
+    </xsd:annotation>
+    <xsd:sequence>
+      <xsd:element name="fechaMedicion" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Fecha de la medición (dd-mm-
+yyyy).</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="horaMedicion" type="xsd:string">
+        <xsd:annotation>
+          <xsd:documentation>Hora de la medición (hh:mm:ss).
+Formato de 24 horas.</xsd:documentation>
+        </xsd:annotation>
+      </xsd:element>
+      <xsd:element name="totalizador">
+        <xsd:annotation>
+          <xsd:documentation>Valor del totalizador del flujómetro en
+metros cúbicos. Sin decimales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="caudal">
+        <xsd:annotation>
+          <xsd:documentation>Caudal medido con el flujómetro en
+l/s. Con 2 decimales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+      <xsd:element name="nivelFreaticoDelPozo">
+        <xsd:annotation>
+          <xsd:documentation>Nivel freatico medido por el
+pozómetro en metros. Con 2 decimales.</xsd:documentation>
+        </xsd:annotation>
+        <xsd:simpleType>
+          <xsd:restriction base="xsd:decimal"/>
+        </xsd:simpleType>
+      </xsd:element>
+    </xsd:sequence>
+  </xsd:complexType>
+</xsd:schema>
