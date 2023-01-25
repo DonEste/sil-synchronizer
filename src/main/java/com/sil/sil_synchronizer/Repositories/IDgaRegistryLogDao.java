@@ -14,11 +14,4 @@ public interface IDgaRegistryLogDao extends JpaRepository<DgaRegistryLogEntity, 
             "    FROM Dga_Registry_Log where SITE_code IN (:siteCodes)) vai " +
             "WHERE RowNum = 1", nativeQuery = true)
     List<DgaRegistryLogEntity> findLastByInformationNumber(@Param("siteCodes") List<String> siteCodes);
-
-    @Query(value = "SELECT drl " +
-            " FROM DgaRegistryLogEntity drl " +
-            " WHERE drl.siteCode IN (:siteCodes)" +
-            " GROUP BY drl.siteCode")
-    List<DgaRegistryLogEntity> findLastByInformationNumber_old(@Param("siteCodes") List<String> siteCodes);
-
 }

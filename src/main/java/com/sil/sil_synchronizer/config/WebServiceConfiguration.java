@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
 import org.springframework.oxm.jaxb.Jaxb2Marshaller;
-import org.springframework.ws.config.annotation.EnableWs;
 
 @Configuration
 public class WebServiceConfiguration {

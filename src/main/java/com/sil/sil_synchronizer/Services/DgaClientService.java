@@ -6,23 +6,21 @@ import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionResponse;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionSubterranea;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionTrazaType;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataUsuario;
+import com.sil.sil_synchronizer.webservices.wsdl.ObjectFactory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.oxm.Marshaller;
 import org.springframework.ws.WebServiceMessage;
 import org.springframework.ws.client.core.support.WebServiceGatewaySupport;
-import org.springframework.ws.soap.SoapBody;
 import org.springframework.ws.soap.SoapHeader;
 import org.springframework.ws.soap.SoapMessage;
 import org.springframework.ws.soap.client.core.SoapActionCallback;
-import org.springframework.xml.transform.StringSource;
 
+import javax.xml.bind.JAXBElement;
 import javax.xml.datatype.DatatypeConstants;
 import javax.xml.datatype.DatatypeFactory;
-import javax.xml.namespace.QName;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import java.math.BigDecimal;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -98,15 +96,14 @@ public class DgaClientService extends WebServiceGatewaySupport {
                 try {
                     SoapMessage soapMessage = (SoapMessage) message;
                     SoapHeader header = soapMessage.getSoapHeader();
-                    String action = soapMessage.getSoapAction();
-                    SoapBody body = soapMessage.getSoapBody();
-                    QName qname = body.getName();
-                    StringSource headerSource = new StringSource("<aut:authSendDataExtraccionTraza xmlns:aut=\"http://www.mop.cl/controlextraccion/xsd/datosExtraccion/AuthSendDataExtraccionRequest\">" +
-                            "<aut:codigoDeLaObra>" + dgaRequiredInformationDto.getSiteCode() + "</aut:codigoDeLaObra>" +
-                            "<aut:timeStampOrigen>" + dateFormatTimestamp.format(new Date()) + "</aut:timeStampOrigen>" +
-                            "</aut:authSendDataExtraccionTraza>");
-                    Transformer transformer = TransformerFactory.newInstance().newTransformer();
-                    transformer.transform(headerSource, header.getResult());
+
+                    ObjectFactory factory = new ObjectFactory();
+
+                    JAXBElement<AuthSendDataExtraccionTrazaType> headers = factory.createAuthSendDataExtraccionTraza(extraccionTrazaType);
+
+                    Marshaller marshaller = getMarshaller();
+                    marshaller.marshal(headers, header.getResult());
+
                 } catch (Exception e) {
                     e.printStackTrace();
                     //TODO: enviar notificación
