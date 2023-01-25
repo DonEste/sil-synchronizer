@@ -1,6 +1,5 @@
 package com.sil.sil_synchronizer.Services;
 
-import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
 import io.airbrake.javabrake.Config;
 import io.airbrake.javabrake.Notice;
 import io.airbrake.javabrake.Notifier;
@@ -28,21 +27,28 @@ public class NotificationService extends WebServiceGatewaySupport {
 
     public void reportError(Exception exception) {
 
-        log.info("Sending error to AirBrake: {}", exception.getMessage());
+        if (environment.equals("PRODUCTION")) {
+            log.info("Sending error to AirBrake: {}", exception.getMessage());
 
-        Config config = new Config();
+            Config config = new Config();
 
-        config.projectId = airbrajeProjectId;
-        config.projectKey = airbrajeProjectKey;
+            config.projectId = airbrajeProjectId;
+            config.projectKey = airbrajeProjectKey;
 
-        Notifier notifier = new Notifier(config);
+            Notifier notifier = new Notifier(config);
 
-        notifier.addFilter(
-                (Notice notice) -> {
-                    notice.setContext("environment", environment);
-                    return notice;
-                });
+            notifier.addFilter(
+                    (Notice notice) -> {
+                        notice.setContext("environment", environment);
+                        return notice;
+                    });
 
-        notifier.report(exception);
+
+            notifier.report(exception);
+        } else {
+            log.warn("Simulating sending error to AirBrake: {}", exception.getMessage());
+        }
+
+
     }
 }
