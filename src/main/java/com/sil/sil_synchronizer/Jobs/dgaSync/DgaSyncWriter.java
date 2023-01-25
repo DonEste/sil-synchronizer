@@ -4,8 +4,10 @@ import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
 import com.sil.sil_synchronizer.Entities.DgaRegistryLogEntity;
 import com.sil.sil_synchronizer.Repositories.IDgaRegistryLogDao;
 import com.sil.sil_synchronizer.Services.DgaClientService;
+import com.sil.sil_synchronizer.Services.NotificationService;
 import com.sil.sil_synchronizer.Variables;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionResponse;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemWriter;
 
@@ -21,14 +23,17 @@ public class DgaSyncWriter implements ItemWriter<DgaRequiredInformationDto> {
 
     private final DgaClientService dgaClientService;
 
-    public DgaSyncWriter(Variables variables, IDgaRegistryLogDao dgaRegistryLogDao, DgaClientService dgaClientService) {
+    private final NotificationService notificationService;
+
+    public DgaSyncWriter(Variables variables, IDgaRegistryLogDao dgaRegistryLogDao, DgaClientService dgaClientService, NotificationService notificationService) {
         this.variables = variables;
         this.dgaRegistryLogDao = dgaRegistryLogDao;
         this.dgaClientService = dgaClientService;
+        this.notificationService = notificationService;
     }
 
     @Override
-    public void write(List<? extends DgaRequiredInformationDto> items) throws Exception {
+    public void write(@NonNull List<? extends DgaRequiredInformationDto> items) throws Exception {
         //If the environment is set to PRODUCTION, then send the data to the DGA and save log
         if (variables.getEnvironment().equals("PRODUCTION")) {
             for (DgaRequiredInformationDto item : items) {
@@ -58,6 +63,7 @@ public class DgaSyncWriter implements ItemWriter<DgaRequiredInformationDto> {
                     } catch (Exception e) {
                         if (attempts >= variables.getDgaWebServicesMaxAttempts()) {
                             log.error("Se ha superado el número máximo de intentos");
+                            notificationService.reportError(e);
                             throw e;
                         }
                         attempts++;

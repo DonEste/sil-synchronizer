@@ -10,7 +10,6 @@ import java.util.List;
 
 public interface IViewArchivedInformationDao extends JpaRepository<ViewArchivedInformationEntity, Long> {
 
-    //TODO: Test query with real data
     @Query(value = "SELECT ID,  " +
             "       STA_SiteNumber,  " +
             "       INF_NumberInStation,  " +

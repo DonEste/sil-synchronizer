@@ -42,9 +42,6 @@ public class DgaClientService extends WebServiceGatewaySupport {
     @Value("${dga.service.url}")
     private String dgaServiceUrl;
 
-    @Value("${dga.wsld.url}")
-    private String dgaWsdlUrl;
-
     @Value("${dga.webservice.seconds.delay}")
     private long dgaWebServiceDelay;
 
@@ -52,7 +49,8 @@ public class DgaClientService extends WebServiceGatewaySupport {
 
     DateFormat dateFormatDate = new SimpleDateFormat("dd-MM-yyyy");
 
-    DateFormat dateFormatTimestamp = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    @Autowired
+    private NotificationService notificationService;
 
     public AuthSendDataExtraccionResponse sendDataExtrationToDga(DgaRequiredInformationDto dgaRequiredInformationDto) throws Exception {
 
@@ -103,10 +101,9 @@ public class DgaClientService extends WebServiceGatewaySupport {
 
                     Marshaller marshaller = getMarshaller();
                     marshaller.marshal(headers, header.getResult());
-
                 } catch (Exception e) {
                     e.printStackTrace();
-                    //TODO: enviar notificación
+                    notificationService.reportError(e);
                 }
             }
         });

@@ -7,6 +7,7 @@ import com.sil.sil_synchronizer.Entities.ViewArchivedInformationEntity;
 import com.sil.sil_synchronizer.Repositories.IDgaRegistryLogDao;
 import com.sil.sil_synchronizer.Repositories.IViewArchivedInformationDao;
 import com.sil.sil_synchronizer.Services.DgaClientService;
+import com.sil.sil_synchronizer.Services.NotificationService;
 import com.sil.sil_synchronizer.Variables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;
@@ -45,15 +46,18 @@ public class DgaSyncReader implements ItemReader<Map<String, Object>>, ItemStrea
 
     private int stationCount;
 
-    private DgaClientService dgaClientService;
+    private final DgaClientService dgaClientService;
 
-    public DgaSyncReader(Variables variables, IViewArchivedInformationDao viewArchivedInformationDao, IDgaRegistryLogDao dgaRegistryLogDao, DgaClientService dgaClientService) {
+    private final NotificationService notificationService;
+
+    public DgaSyncReader(Variables variables, IViewArchivedInformationDao viewArchivedInformationDao, IDgaRegistryLogDao dgaRegistryLogDao, DgaClientService dgaClientService, NotificationService notificationService) {
         this.variables = variables;
         this.viewArchivedInformationDao = viewArchivedInformationDao;
         this.dgaRegistryLogDao = dgaRegistryLogDao;
         this.resultCount = 0;
         this.stationCount = 0;
         this.dgaClientService = dgaClientService;
+        this.notificationService = notificationService;
     }
 
     @Override
@@ -72,7 +76,7 @@ public class DgaSyncReader implements ItemReader<Map<String, Object>>, ItemStrea
         } catch (Exception e) {
             log.error("Ha ocurrido el siguiente error: {}", e.getMessage());
             e.printStackTrace();
-            //TODO: enviar alerta... quizá con Airbrake
+            notificationService.reportError(e);
             throw new ItemStreamException(e.getMessage());
         }
 
@@ -83,25 +87,30 @@ public class DgaSyncReader implements ItemReader<Map<String, Object>>, ItemStrea
         for (DgaRegistryLogEntity dgaRegistryLog : dgaRegistryLogs) {
             if (getHoursDiff(dgaRegistryLog.getDate(), new Date()) > variables.getHoursRegressionTrigger()) {
                 log.warn("La información de la estación {} no ha sido enviada a la DGA desde hace {} horas", dgaRegistryLog.getStationId(), getHoursDiff(dgaRegistryLog.getDate(), new Date()));
-                //TODO: enviar alerta...
+                notificationService.reportError(
+                        new Exception(
+                                String.format("La información de la estación %d no ha sido enviada a la DGA desde hace %d horas", dgaRegistryLog.getStationId(), getHoursDiff(dgaRegistryLog.getDate(), new Date()))
+                        )
+                );
             }
         }
     }
 
     @Override
     public Map<String, Object> read() throws Exception {
-        if(true){
-            DgaRequiredInformationDto test = new DgaRequiredInformationDto();
-            test.setStationNumber(1);
-            test.setSiteCode("OC-1002-22");
-            test.setFlow(0L);
-            test.setTotalizer(0L);
-            test.setPhreaticLevel(0L);
-            test.setDate(new Date());
-
-            dgaClientService.sendDataExtrationToDga(test);
-            return null;
-        }
+        //Uncomment to test with data set manually
+//        if(true){
+//            DgaRequiredInformationDto test = new DgaRequiredInformationDto();
+//            test.setStationNumber(1);
+//            test.setSiteCode("OC-1002-22");
+//            test.setFlow(0L);
+//            test.setTotalizer(0L);
+//            test.setPhreaticLevel(0L);
+//            test.setDate(new Date());
+//
+//            dgaClientService.sendDataExtrationToDga(test);
+//            return null;
+//        }
 
         //If there is not a valid configuration file loaded, then finish the job
         if (stationConfigurationDtos == null || stationConfigurationDtos.isEmpty()) {
