@@ -8,12 +8,12 @@ The application runs as a scheduled batch job, reading records from the local SC
 
 ```mermaid
 graph TD
-    subgraph Local SCADA Environment
+    subgraph Local_SCADA_Environment
         DB[(PCWin SQL Server)]
         Config[dga_sync_properties.json]
     end
 
-    subgraph Batch Application (sil-synchronizer)
+    subgraph Batch_Application
         Reader[DgaSyncReader]
         Processor[DgaSyncProcessor]
         Writer[DgaSyncWriter]
@@ -21,13 +21,13 @@ graph TD
         Notifier[NotificationService]
     end
 
-    subgraph External Services
+    subgraph External_Services
         DGA[DGA SOAP Web Service API]
         Airbrake[Airbrake Monitoring]
     end
 
     DB -->|Read Raw Logs| Reader
-    Config -->|Mappping Context| Reader
+    Config -->|Mapping Context| Reader
     Reader -->|Map to Dto| Processor
     Processor -->|Transform Data| Writer
     Writer -->|Send SOAP payload| Client
