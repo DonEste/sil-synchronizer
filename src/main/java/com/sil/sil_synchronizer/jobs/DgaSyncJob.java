@@ -1,13 +1,13 @@
-package com.sil.sil_synchronizer.Jobs;
+package com.sil.sil_synchronizer.jobs;
 
-import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
-import com.sil.sil_synchronizer.Jobs.dgaSync.DgaSyncProcessor;
-import com.sil.sil_synchronizer.Jobs.dgaSync.DgaSyncReader;
-import com.sil.sil_synchronizer.Jobs.dgaSync.DgaSyncWriter;
-import com.sil.sil_synchronizer.Repositories.IDgaRegistryLogDao;
-import com.sil.sil_synchronizer.Repositories.IViewArchivedInformationDao;
-import com.sil.sil_synchronizer.Services.DgaClientService;
-import com.sil.sil_synchronizer.Services.NotificationService;
+import com.sil.sil_synchronizer.dtos.DgaRequiredInformationDto;
+import com.sil.sil_synchronizer.jobs.dgaSync.DgaSyncProcessor;
+import com.sil.sil_synchronizer.jobs.dgaSync.DgaSyncReader;
+import com.sil.sil_synchronizer.jobs.dgaSync.DgaSyncWriter;
+import com.sil.sil_synchronizer.repositories.IDgaRegistryLogDao;
+import com.sil.sil_synchronizer.repositories.IViewArchivedInformationDao;
+import com.sil.sil_synchronizer.services.DgaClientService;
+import com.sil.sil_synchronizer.services.NotificationService;
 import com.sil.sil_synchronizer.Variables;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;

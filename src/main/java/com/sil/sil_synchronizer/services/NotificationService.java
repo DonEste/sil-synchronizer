@@ -1,4 +1,4 @@
-package com.sil.sil_synchronizer.Services;
+package com.sil.sil_synchronizer.services;
 
 import io.airbrake.javabrake.Config;
 import io.airbrake.javabrake.Notice;

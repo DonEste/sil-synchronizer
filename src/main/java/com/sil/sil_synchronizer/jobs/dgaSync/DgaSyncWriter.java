@@ -1,10 +1,10 @@
-package com.sil.sil_synchronizer.Jobs.dgaSync;
+package com.sil.sil_synchronizer.jobs.dgaSync;
 
-import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
-import com.sil.sil_synchronizer.Entities.DgaRegistryLogEntity;
-import com.sil.sil_synchronizer.Repositories.IDgaRegistryLogDao;
-import com.sil.sil_synchronizer.Services.DgaClientService;
-import com.sil.sil_synchronizer.Services.NotificationService;
+import com.sil.sil_synchronizer.dtos.DgaRequiredInformationDto;
+import com.sil.sil_synchronizer.entities.DgaRegistryLogEntity;
+import com.sil.sil_synchronizer.repositories.IDgaRegistryLogDao;
+import com.sil.sil_synchronizer.services.DgaClientService;
+import com.sil.sil_synchronizer.services.NotificationService;
 import com.sil.sil_synchronizer.Variables;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionResponse;
 import lombok.NonNull;

@@ -1,4 +1,4 @@
-package com.sil.sil_synchronizer.Jobs;
+package com.sil.sil_synchronizer.jobs;
 
 import com.sil.sil_synchronizer.Variables;
 import lombok.extern.slf4j.Slf4j;

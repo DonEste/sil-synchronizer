@@ -1,4 +1,4 @@
-package com.sil.sil_synchronizer.Dtos;
+package com.sil.sil_synchronizer.dtos;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.Data;

@@ -1,4 +1,4 @@
-package com.sil.sil_synchronizer.Entities;
+package com.sil.sil_synchronizer.entities;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;

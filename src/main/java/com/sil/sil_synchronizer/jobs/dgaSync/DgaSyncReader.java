@@ -1,13 +1,13 @@
-package com.sil.sil_synchronizer.Jobs.dgaSync;
+package com.sil.sil_synchronizer.jobs.dgaSync;
 
-import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
-import com.sil.sil_synchronizer.Dtos.StationConfigurationDto;
-import com.sil.sil_synchronizer.Entities.DgaRegistryLogEntity;
-import com.sil.sil_synchronizer.Entities.ViewArchivedInformationEntity;
-import com.sil.sil_synchronizer.Repositories.IDgaRegistryLogDao;
-import com.sil.sil_synchronizer.Repositories.IViewArchivedInformationDao;
-import com.sil.sil_synchronizer.Services.DgaClientService;
-import com.sil.sil_synchronizer.Services.NotificationService;
+import com.sil.sil_synchronizer.dtos.DgaRequiredInformationDto;
+import com.sil.sil_synchronizer.dtos.StationConfigurationDto;
+import com.sil.sil_synchronizer.entities.DgaRegistryLogEntity;
+import com.sil.sil_synchronizer.entities.ViewArchivedInformationEntity;
+import com.sil.sil_synchronizer.repositories.IDgaRegistryLogDao;
+import com.sil.sil_synchronizer.repositories.IViewArchivedInformationDao;
+import com.sil.sil_synchronizer.services.DgaClientService;
+import com.sil.sil_synchronizer.services.NotificationService;
 import com.sil.sil_synchronizer.Variables;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.time.DateUtils;

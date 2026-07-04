@@ -1,6 +1,6 @@
-package com.sil.sil_synchronizer.Services;
+package com.sil.sil_synchronizer.services;
 
-import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
+import com.sil.sil_synchronizer.dtos.DgaRequiredInformationDto;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionRequest;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionResponse;
 import com.sil.sil_synchronizer.webservices.wsdl.AuthSendDataExtraccionSubterranea;

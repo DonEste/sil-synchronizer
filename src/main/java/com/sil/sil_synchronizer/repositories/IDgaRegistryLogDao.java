@@ -1,6 +1,6 @@
-package com.sil.sil_synchronizer.Repositories;
+package com.sil.sil_synchronizer.repositories;
 
-import com.sil.sil_synchronizer.Entities.DgaRegistryLogEntity;
+import com.sil.sil_synchronizer.entities.DgaRegistryLogEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

@@ -1,6 +1,6 @@
 package com.sil.sil_synchronizer.config;
 
-import com.sil.sil_synchronizer.Services.DgaClientService;
+import com.sil.sil_synchronizer.services.DgaClientService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

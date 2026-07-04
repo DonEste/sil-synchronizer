@@ -1,8 +1,8 @@
-package com.sil.sil_synchronizer.Jobs.dgaSync;
+package com.sil.sil_synchronizer.jobs.dgaSync;
 
-import com.sil.sil_synchronizer.Dtos.DgaRequiredInformationDto;
-import com.sil.sil_synchronizer.Dtos.StationConfigurationDto;
-import com.sil.sil_synchronizer.Entities.ViewArchivedInformationEntity;
+import com.sil.sil_synchronizer.dtos.DgaRequiredInformationDto;
+import com.sil.sil_synchronizer.dtos.StationConfigurationDto;
+import com.sil.sil_synchronizer.entities.ViewArchivedInformationEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 
