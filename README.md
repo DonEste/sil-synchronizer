@@ -1,122 +1,137 @@
-# DGA Sync
+# SIL DGA Synchronizer
 
-Este proyecto es un software creado para sincronizar la información de extracción obtenida desde el software de monitoreo PCWin
+`sil-synchronizer` is a Spring Boot & Spring Batch application designed to automate the synchronization of water extraction measurements (flow rates, totalizers, and phreatic/groundwater levels) from a local **PCWin SCADA (SQL Server)** database to the official **DGA (Dirección General de Aguas)** SOAP Web Service API in Chile.
 
-## Como compilar
+## 🏗️ System Architecture
 
-La compilación del proyecto se hace vía Maven ejecutando en la carpeta del proyecto el comando
+The application runs as a scheduled batch job, reading records from the local SCADA database, processing them to match the required schemas, sending them via SOAP requests to the DGA platform, and logging the status.
 
-```shell
-mvn clean instal -DskipTests
+```mermaid
+graph TD
+    subgraph Local SCADA Environment
+        DB[(PCWin SQL Server)]
+        Config[dga_sync_properties.json]
+    end
+
+    subgraph Batch Application (sil-synchronizer)
+        Reader[DgaSyncReader]
+        Processor[DgaSyncProcessor]
+        Writer[DgaSyncWriter]
+        Client[DgaClientService]
+        Notifier[NotificationService]
+    end
+
+    subgraph External Services
+        DGA[DGA SOAP Web Service API]
+        Airbrake[Airbrake Monitoring]
+    end
+
+    DB -->|Read Raw Logs| Reader
+    Config -->|Mappping Context| Reader
+    Reader -->|Map to Dto| Processor
+    Processor -->|Transform Data| Writer
+    Writer -->|Send SOAP payload| Client
+    Client -->|SOAP Request| DGA
+    DGA -->|Response Status| Client
+    Client -->|On Error| Notifier
+    Notifier -->|Send Alert| Airbrake
 ```
 
-## Uso
+---
 
-### Informacion general
+## 🛠️ Prerequisites
 
-Este proyecto genera un archivo ".jar" que debe ser ejecutado en la misma máquina en la que se encuentra la base de datos 
-de PCWin, con el objetivo de usar la conexión de seguridad embebida en Windows, de lo contrario se pueden cambiar las variables
-de conexión en [application.properties](src/main/resources/application.properties) (sección DATA SOURCE) para apuntar a la máquina requerida
+* **Java Runtime**: JRE or JDK 11 (Amazon Corretto 11 recommended).
+* **Database Access**: Read access to the PCWin SCADA SQL Server database (`ScadaNetDb`). If utilizing Windows Integrated Security, the application must run under a Windows user account with appropriate database permissions.
+* **Network Connectivity**: HTTPS outbound access to the DGA web service host (`snia.mop.gob.cl`).
 
-Tener en cuenta que de ser necesario conectarse a la base de datos usando hostname, usuario y contraseña es necesario configurar
-sql server para que acepte dichas conexiones.
+---
 
-### Dependencias
+## ⚙️ Configuration & Environment Variables
 
-Para ejecutar el software es necesario tener el compilado en forma ".jar" y tener instalado un algún JRE o JDK en la máquina
-en la que se ejecutará, yo recomiendo descargar [Amazon Corretto 11](https://corretto.aws/downloads/latest/amazon-corretto-11-x64-windows-jdk.msi),
-que es el que usé, pero cualquiera de 11 en adelante debería estar bien.
+The application can be configured via environment variables or by modifying the `src/main/resources/application.properties` file.
 
-### Variables
+### Required Environment Variables
+| Variable | Description | Default Value |
+| :--- | :--- | :--- |
+| `ENVIRONMENT` | Defines application mode. SOAP integration only triggers on `PRODUCTION`. | `LOCAL` |
+| `DGA_USER` | RUT of the user registered in the DGA Effective Extractions Portal. | `1-9` |
+| `DGA_PASSWORD` | Password for the DGA Effective Extractions Portal. | `*****` |
+| `AIRBRAKE_PROJECT_ID` | Project ID for error notifications in Airbrake. | `*****` |
+| `AIRBRAKE_PROJECT_KEY` | API Key for error notifications in Airbrake. | `*****` |
 
-En el archivo [application.properties](src/main/resources/application.properties) hay muchas variables de entorno que se
-usan para el correcto funcionamiento de la aplicación, y algunas de ellas es necesario que se sobreescriban en el ambiente
-productivo. 
+### Database & Batch Performance Variables
+| Variable | Description | Default Value |
+| :--- | :--- | :--- |
+| `DB_HOSTNAME` | SQL Server hostname or instance name. | `MYHOTEL-PC\MSSQLSERVER` |
+| `DB_PORT` | SQL Server port. | `1433` |
+| `DB_DB_NAME` | Database name to query. | `ScadaNetDb;integratedSecurity=true;` |
+| `DB_USERNAME` | SQL Server username (if not using Integrated Security). | `*****` |
+| `DB_PASSWORD` | SQL Server password (if not using Integrated Security). | `*****` |
+| `CHUNK_SIZE` | Size of the transaction block for Spring Batch processing. | `10` |
+| `PROPERTIES_FILENAME` | Name of the mapping configuration JSON file. | `dga_sync_properties.json` |
 
-Los nombres de las varibles de entorno a sobreescribir son las que están en SCREAMING_SNAKE_CASE y entre "${" y ":",
-por lo que para el ejemplo de querer sobreescribir la variable de tipo de entorno, definida en el application.properties como
-"app.environment=${ENVIRONMENT:LOCAL}" se debe crear una variable de nombre "ENVIRONMENT"
+### Synchronization Timing Controls
+| Variable | Description | Default Value |
+| :--- | :--- | :--- |
+| `HOURS_REGRESSION_RETRY` | Number of hours to look back and retry failed submissions. | `24` |
+| `HOURS_REGRESSION_TRIGGER`| Hours of missing telemetry before triggering an alert. | `2` |
+| `HOURS_OFFSET` | Delay offset (in hours) to wait before sending measurements to ensure data integrity. | `1` |
+| `DGA_WEBSERVICE_MAX_ATTEMPTS`| Maximum retries per SOAP call. | `3` |
+| `DGA_WEBSERVICE_SECONDS_DELAY`| Time delay (seconds) between successive SOAP calls. | `10` |
 
-#### Varibles de entorno necesarias
+---
 
-```properties
-#Define el tipo de ambbiente, hay partes que solo se ejecutan si su valor es PRODUCTION
-app.environment=${ENVIRONMENT:LOCAL}
-#Rut del usuario en el portal de extracciones efectivas
-dga.login.user=${DGA_USER:1-9}
-#Contraseña del usuario en el portal de extracciones efectivas
-dga.login.password=${DGA_PASSWORD:*****}
-#Id del proyecto en AirBrake para manejar notificaciones
-airbrake.project.id=${AIRBRAKE_PROJECT_ID:*****}
-#Api Key del proyecto en AirBrake para manejar notificaciones
-airbrake.project.key=${AIRBRAKE_PROJECT_KEY:*****}
-```
+## 📁 Mapping Configuration (`dga_sync_properties.json`)
 
-#### Varibles de entorno opcionales
+To map SCADA physical measuring stations to DGA obra codes, you must place a `dga_sync_properties.json` file in the same directory as the executable `.jar` file.
 
-```properties
-#Valores que forman el string de conexion a BD
-db.url=jdbc:sqlserver://${DB_HOSTNAME:MYHOTEL-PC\\MSSQLSERVER}:${DB_PORT:1433};databaseName=${DB_DB_NAME:ScadaNetDb;integratedSecurity=true;}
-#Usuario de BD de PCWin (en el archivo están comentado, hay que descomentarlo y recompilar el proyecto si se quiere usar)
-db.username=${DB_USERNAME:*****}
-#Contraseña de BD de PCWin (en el archivo están comentado, hay que descomentarlo y recompilar el proyecto si se quiere usar)
-db.password=${DB_PASSWORD:*****}
-#Tamaño de registros a procesar simultaneamente
-job.batch.chunk.size=${CHUNK_SIZE:10}
-#Nombre del archivo que contiene las configuraciones de las extracciones a registrar en la DGA
-properties.filename=${PROPERTIES_FILENAME:dga_sync_properties.json}
-#Cantidad de horas que se intentará enviar retroactivamente en caso de que haya habido tiempo sin envíos a la DGA
-hours.regression.retry=${HOURS_REGRESSION_RETRY:24}
-#Cantidad de horas sin envíos a la DGA antes de que se gatille una alerta
-hours.regression.trigger=${HOURS_REGRESSION_TRIGGER:2}
-#Cantidad de horas de espera antes de enviar registros a la DGA (para asegurar integridad de la información enviada)
-hours.search.offset=${HOURS_OFFSET:1}
-#Número de intentos de conexión a la DGa antes de gatillar un error
-dga.webservice.max.attempts=${DGA_WEBSERVICE_MAX_ATTEMPTS:3}
-#Delay en segundos entre una llamada y otra al WS de la DGA
-dga.webservice.seconds.delay=${DGA_WEBSERVICE_SECONDS_DELAY:10}
-```
-
-# Ejecución
-
-Para ejecutar el software efectivamente es necesario que se encuentre junto al jar a ejecutarse un archivo llamado 
-"dga_sync_properties.json" con la configuración de mapeo entre los datos de el pozo manejados por la DGA y la información
-en PCWin. El archivo debe estar en formato json, con tantos objetos como pozos se deban registrar.
-
-EJ:
+### Format Example
 ```json
 [
   {
     "numero_estacion": 1,
-    "codigo_obra": "EXAMPLE1",
+    "codigo_obra": "OBRA_EXAMPLE_A",
     "numero_informacion_nivel_freatico": 1,
     "numero_informacion_totalizador": 2,
     "numero_informacion_caudal": 3
   },
   {
     "numero_estacion": 2,
-    "codigo_obra": "EXAMPLE2",
-    "numero_informacion_nivel_freatico": 1,
-    "numero_informacion_totalizador": 2,
-    "numero_informacion_caudal": 3
-  },
-  {
-    "numero_estacion": 3,
-    "codigo_obra": "EXAMPLE3",
+    "codigo_obra": "OBRA_EXAMPLE_B",
     "numero_informacion_nivel_freatico": 1,
     "numero_informacion_totalizador": 2,
     "numero_informacion_caudal": 3
   }
 ]
 ```
+* **`numero_estacion`**: Local station ID in PCWin SCADA.
+* **`codigo_obra`**: Registration ID assigned by the DGA.
+* **`numero_informacion_nivel_freatico`**: Channel index for the groundwater level.
+* **`numero_informacion_totalizador`**: Channel index for the volume totalizer.
+* **`numero_informacion_caudal`**: Channel index for the instant flow rate.
 
-Finalmente, una vez que se hayan configurado las variables de entorno, se tenga el JDK o JRE instalado y se encuentre el 
-archivo de configuración junto al .jar, el comando de ejecución es (usar el nuevo nombre del archivo si es que se cambia):
+---
 
+## 🚀 Execution
+
+### 1. Compilation
+Build the executable Jar using the Maven Wrapper:
 ```shell
-    java -jar Sil_Synchronizer-0.1.0.jar
+# Windows
+.\mvnw.cmd clean package -DskipTests
+
+# Linux/macOS
+./mvnw clean package -DskipTests
 ```
 
-## Licencia
+### 2. Run the Application
+Execute the compiled JAR file:
+```shell
+java -jar target/Sil_Synchronizer-0.1.0.jar
+```
 
-[MIT](https://choosealicense.com/licenses/mit/)
+---
+
+## 📄 License
+This project is licensed under the [MIT License](https://choosealicense.com/licenses/mit/).
